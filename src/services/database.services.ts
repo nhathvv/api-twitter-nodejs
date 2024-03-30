@@ -9,7 +9,7 @@ class DatabaseService {
   private db: Db
   constructor() {
     this.client = new MongoClient(uri)
-    this.db = this.client.db('twitter-dev')
+    this.db = this.client.db(process.env.DB_NAME)
   }
   async connect() {
     try {
