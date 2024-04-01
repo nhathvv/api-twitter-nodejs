@@ -4,7 +4,13 @@ import { loginController, registerController } from '~/controllers/users.control
 import { wrapAsync } from '~/utils/handlers'
 const router = Router()
 
-router.post('/login', loginValidator, loginController)
+/**
+ * Description. Login user
+ * Path: /login
+ * Method: POST
+ * Body : {email : string, password : string}
+ */
+router.post('/login', loginValidator, wrapAsync(loginController))
 /**
  * Description. Register new user
  * Path: /register
