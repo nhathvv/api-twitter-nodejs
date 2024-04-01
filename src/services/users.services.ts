@@ -3,20 +3,21 @@ import User from '../models/schemas/Users.schema'
 import { RegisterReqBody } from '~/models/requests/Users.request'
 import { hashPassword } from '~/utils/crypto'
 import { signToken } from '~/utils/jwt'
+import { TokenTypes } from '~/constants/enums'
 class UsersService {
   private signAccessToken(user_id: string) {
     return signToken({
-      payload: { user_id },
+      payload: { user_id, token_type: TokenTypes.AccessToken },
       options: {
-        expiresIn: '15m'
+        expiresIn: process.env.EXPIRES_IN_ACCESS_TOKEN
       }
     })
   }
   private signRefreshToken(user_id: string) {
     return signToken({
-      payload: { user_id },
+      payload: { user_id, token_type: TokenTypes.RefreshToken },
       options: {
-        expiresIn: '100d'
+        expiresIn: process.env.EXPIRES_IN_REFRESH_TOKEN
       }
     })
   }
