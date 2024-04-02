@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from 'express'
 import { check, checkSchema } from 'express-validator'
+import { TokenExpiredError } from 'jsonwebtoken'
 import { has } from 'lodash'
+import HTTP_STATUS from '~/constants/httpStatus'
 import USERS_MESSAGES from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
 import databaseService from '~/services/database.services'
@@ -172,15 +174,57 @@ export const accessTokenValidator = validate(
           options: async (value, { req }) => {
             const access_token = value.split(' ')[1]
             if (!access_token) {
-              throw new ErrorWithStatus({ message: USERS_MESSAGES.ACCESS_TOKEN_IS_REQUIRED, status: 401 })
+              throw new ErrorWithStatus({
+                message: USERS_MESSAGES.ACCESS_TOKEN_IS_REQUIRED,
+                status: HTTP_STATUS.UNAUTHORIZED
+              })
             }
             const decoded_authorization = await verifyToken({ token: access_token })
             req.decoded_authorization = decoded_authorization
+
             return true
           }
         }
       }
     },
     ['headers']
+  )
+)
+export const refreshTokenValidator = validate(
+  checkSchema(
+    {
+      refresh_token: {
+        notEmpty: {
+          errorMessage: USERS_MESSAGES.REFRESH_TOKEN_IS_REQUIRED
+        },
+        isString: {
+          errorMessage: USERS_MESSAGES.REFRESH_TOKEN_MUST_BE_A_STRING
+        },
+        custom: {
+          options: async (value: string, { req }) => {
+            try {
+              const [decoded_refresh_token, refresh_token] = await Promise.all([
+                verifyToken({ token: value }),
+                databaseService.refreshTokens.findOne({ token: value })
+              ])
+              if (!refresh_token) {
+                throw new ErrorWithStatus({
+                  message: USERS_MESSAGES.REFRESH_TOKEN_NOT_EXITS,
+                  status: HTTP_STATUS.UNAUTHORIZED
+                })
+              }
+              req.decoded_authorization = decoded_refresh_token
+            } catch (error) {
+              throw new ErrorWithStatus({
+                message: (error as TokenExpiredError).message,
+                status: HTTP_STATUS.UNAUTHORIZED
+              })
+            }
+            return true
+          }
+        }
+      }
+    },
+    ['body']
   )
 )

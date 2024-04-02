@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { RegisterReqBody } from '~/models/requests/Users.request'
+import { LogoutReqBody, RegisterReqBody } from '~/models/requests/Users.request'
 import usersService from '~/services/users.services'
 import { ParamsDictionary } from 'express-serve-static-core'
 import USERS_MESSAGES from '~/constants/messages'
@@ -19,4 +19,10 @@ export const registerController = async (req: Request<ParamsDictionary, any, Reg
     message: USERS_MESSAGES.REGISTER_SUCCESS,
     result
   })
+}
+
+export const logoutController = async (req: Request<ParamsDictionary, any, LogoutReqBody>, res: Response) => {
+  const refresh_token = req.body.refresh_token
+  const result = await usersService.logout(refresh_token)
+  return res.status(200).json(result)
 }
