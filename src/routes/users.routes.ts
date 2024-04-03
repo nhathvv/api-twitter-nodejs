@@ -5,7 +5,7 @@ import {
   refreshTokenValidator,
   registerValidator
 } from '../middlewares/users.middlewares'
-import { loginController, logoutController, registerController } from '~/controllers/users.controllers'
+import { loginController, logoutController, refreshTokenController, registerController } from '~/controllers/users.controllers'
 import { wrapRequestHandler } from '~/utils/handlers'
 import { log } from 'console'
 const router = Router()
@@ -32,4 +32,11 @@ router.post('/register', registerValidator, wrapRequestHandler(registerControlle
  * Body : {}
  */
 router.post('/logout', accessTokenValidator, refreshTokenValidator, wrapRequestHandler(logoutController))
+/**
+ * Description. Refresh access token
+ * Path: /refresh_token
+ * Method: POST
+ * Body : {refresh_token : string}
+ */
+router.post('/refresh-token', refreshTokenValidator, wrapRequestHandler(refreshTokenController))
 export default router

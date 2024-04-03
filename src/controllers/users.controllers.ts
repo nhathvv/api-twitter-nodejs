@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { LogoutReqBody, RegisterReqBody } from '~/models/requests/Users.request'
+import { LogoutReqBody, RefreshTokenReqBody, RegisterReqBody, TokenPayload } from '~/models/requests/Users.request'
 import usersService from '~/services/users.services'
 import { ParamsDictionary } from 'express-serve-static-core'
 import USERS_MESSAGES from '~/constants/messages'
@@ -25,4 +25,16 @@ export const logoutController = async (req: Request<ParamsDictionary, any, Logou
   const refresh_token = req.body.refresh_token
   const result = await usersService.logout(refresh_token)
   return res.status(200).json(result)
+}
+export const refreshTokenController = async (
+  req: Request<ParamsDictionary, any, RefreshTokenReqBody>,
+  res: Response
+) => {
+  const refresh_token = req.body.refresh_token
+  const { user_id } = req.decoded_refresh_token as TokenPayload
+  const result = await usersService.refreshToken({ user_id, refresh_token })
+  return res.status(200).json({
+    message: USERS_MESSAGES.REFRESH_TOKEN_SUCCESS,
+    result
+  })
 }

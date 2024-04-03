@@ -2,11 +2,14 @@ import databaseService from './database.services'
 import User from '../models/schemas/Users.schema'
 import { RegisterReqBody } from '~/models/requests/Users.request'
 import { hashPassword } from '~/utils/crypto'
-import { signToken } from '~/utils/jwt'
+import { signToken, verifyToken } from '~/utils/jwt'
 import { TokenTypes } from '~/constants/enums'
 import { ObjectId } from 'mongodb'
 import { RefreshTokens } from '~/models/schemas/RefreshTokens.schema'
 import { config } from 'dotenv'
+import { ErrorWithStatus } from '~/models/Errors'
+import USERS_MESSAGES from '~/constants/messages'
+import HTTP_STATUS from '~/constants/httpStatus'
 config()
 class UsersService {
   private signAccessToken(user_id: string) {
@@ -69,6 +72,20 @@ class UsersService {
     await databaseService.refreshTokens.deleteOne({ token: refresh_token })
     return {
       message: 'Logout success'
+    }
+  }
+  async refreshToken({ user_id, refresh_token }: { user_id: string; refresh_token: string }) {
+    const [new_access_token, new_refresh_token] = await this.signAccessTokenAndRefreshToken(user_id)
+    await databaseService.refreshTokens.deleteOne({ token: refresh_token })
+    await databaseService.refreshTokens.insertOne(
+      new RefreshTokens({
+        user_id: new ObjectId(user_id),
+        token: new_refresh_token
+      })
+    )
+    return {
+      access_token: new_access_token,
+      refresh_token: new_refresh_token
     }
   }
 }

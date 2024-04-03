@@ -213,7 +213,7 @@ export const refreshTokenValidator = validate(
                   status: HTTP_STATUS.UNAUTHORIZED
                 })
               }
-              req.decoded_authorization = decoded_refresh_token
+              req.decoded_refresh_token = decoded_refresh_token
             } catch (error) {
               throw new ErrorWithStatus({
                 message: (error as TokenExpiredError).message,
