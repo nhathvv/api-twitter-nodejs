@@ -11,6 +11,7 @@ import {
 } from '../middlewares/users.middlewares'
 import {
   forgotPasswordController,
+  getMeController,
   loginController,
   logoutController,
   refreshTokenController,
@@ -21,6 +22,7 @@ import {
   verifyForgotPasswordTokenController
 } from '~/controllers/users.controllers'
 import { wrapRequestHandler } from '~/utils/handlers'
+import { get } from 'lodash'
 const router = Router()
 
 /**
@@ -91,4 +93,11 @@ router.post(
  * Body : {forgot_password_token : string, password : string, confirm_password : string}
  */
 router.post('/reset-password', resetPasswordValidator, wrapRequestHandler(resetPasswordController))
+/**
+ * Description. Get user info
+ * Path: /me
+ * Method: GET
+ * Headers : {Authorization : Bearer <access_token>}
+ */
+router.get('/me', accessTokenValidator, wrapRequestHandler(getMeController))
 export default router
