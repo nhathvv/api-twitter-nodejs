@@ -267,3 +267,35 @@ export const emailVerifyTokenValidator = validate(
     }
   })
 )
+export const forgotPasswordValidator = validate(
+  checkSchema(
+    {
+      email: {
+        notEmpty: {
+          errorMessage: USERS_MESSAGES.EMAIL_IS_REQUIRED
+        },
+        isEmail: {
+          errorMessage: USERS_MESSAGES.EMAIL_IS_INVALID
+        },
+        isLength: {
+          options: { min: 3, max: 100 },
+          errorMessage: USERS_MESSAGES.EMAIL_LENGTH_MUST_BE_FROM_3_TO_100
+        },
+        trim: true,
+        custom: {
+          options: async (value, { req }) => {
+            const user = await databaseService.users.findOne({
+              email: value
+            })
+            if (user === null) {
+              throw new Error(USERS_MESSAGES.USER_PASSWORD_IS_INCORRECT)
+            }
+            req.user = user
+            return true
+          }
+        }
+      }
+    },
+    ['body']
+  )
+)

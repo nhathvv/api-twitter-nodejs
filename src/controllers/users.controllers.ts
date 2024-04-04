@@ -13,6 +13,7 @@ import databaseService from '~/services/database.services'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { ObjectId } from 'mongodb'
 import { UserVerifyStatus } from '~/constants/enums'
+import User from '~/models/schemas/Users.schema'
 export const loginController = async (req: Request, res: Response) => {
   const { user }: any = req
   const user_id = user._id.toString()
@@ -88,5 +89,11 @@ export const resendVerifyEmailController = async (req: Request, res: Response) =
     })
   }
   const result = await usersService.resendVerifyEmail(user_id)
+  return res.status(HTTP_STATUS.ACCEPTED).json(result)
+}
+
+export const forgotPasswordController = async (req: Request, res: Response) => {
+  const {_id} = req.user as User
+  const result = await usersService.forgotPassword((_id as ObjectId).toString())
   return res.status(HTTP_STATUS.ACCEPTED).json(result)
 }
