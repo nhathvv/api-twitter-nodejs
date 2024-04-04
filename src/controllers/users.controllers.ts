@@ -12,6 +12,7 @@ import USERS_MESSAGES from '~/constants/messages'
 import databaseService from '~/services/database.services'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { ObjectId } from 'mongodb'
+import { UserVerifyStatus } from '~/constants/enums'
 export const loginController = async (req: Request, res: Response) => {
   const { user }: any = req
   const user_id = user._id.toString()
@@ -35,6 +36,7 @@ export const logoutController = async (req: Request<ParamsDictionary, any, Logou
   const result = await usersService.logout(refresh_token)
   return res.status(200).json(result)
 }
+
 export const refreshTokenController = async (
   req: Request<ParamsDictionary, any, RefreshTokenReqBody>,
   res: Response
@@ -54,12 +56,12 @@ export const verifyEmailController = async (req: Request<ParamsDictionary, any, 
     _id: new ObjectId(user_id)
   })
   if (!user) {
-    return res.status(HTTP_STATUS.UNAUTHORIZED).json({
+    return res.status(HTTP_STATUS.NOT_FOUND).json({
       message: USERS_MESSAGES.USER_NOT_FOUND
     })
   }
   if (user.email_verify_token == '') {
-    return res.status(400).json({
+    return res.status(HTTP_STATUS.BAD_REQUEST).json({
       message: USERS_MESSAGES.EMAIL_ALREADY_VERIFIED_BEFORE
     })
   }
@@ -68,4 +70,23 @@ export const verifyEmailController = async (req: Request<ParamsDictionary, any, 
     message: USERS_MESSAGES.EMAIL_VERIFY_SUCCESS,
     result
   })
+}
+
+export const resendVerifyEmailController = async (req: Request, res: Response) => {
+  const { user_id } = req.decoded_authorization as TokenPayload
+  const user = await databaseService.users.findOne({
+    _id: new ObjectId(user_id)
+  })
+  if (!user) {
+    return res.status(HTTP_STATUS.NOT_FOUND).json({
+      message: USERS_MESSAGES.USER_NOT_FOUND
+    })
+  }
+  if (user.verify === UserVerifyStatus.Verified) {
+    return res.status(HTTP_STATUS.BAD_REQUEST).json({
+      message: USERS_MESSAGES.EMAIL_ALREADY_VERIFIED_BEFORE
+    })
+  }
+  const result = await usersService.resendVerifyEmail(user_id)
+  return res.status(HTTP_STATUS.ACCEPTED).json(result)
 }
