@@ -29,5 +29,8 @@ const USERS_MESSAGES = {
   REFRESH_TOKEN_NOT_EXITS: 'Refresh token not exists',
   REFRESH_TOKEN_NOT_FOUND: 'Refresh token not found',
   REFRESH_TOKEN_SUCCESS: 'Refresh token success',
+  EMAIL_VERIFY_TOKEN_IS_REQUIRED: 'Email verify token is required',
+  EMAIL_ALREADY_VERIFIED_BEFORE: 'Email already verified before',
+  EMAIL_VERIFY_SUCCESS: 'Email verify success'
 }
 export default USERS_MESSAGES
