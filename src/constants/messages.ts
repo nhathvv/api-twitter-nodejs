@@ -25,7 +25,6 @@ const USERS_MESSAGES = {
   REGISTER_SUCCESS: 'Register success',
   ACCESS_TOKEN_IS_REQUIRED: 'Access token is required',
   REFRESH_TOKEN_IS_REQUIRED: 'Refresh token is required',
-  REFRESH_TOKEN_MUST_BE_A_STRING: 'Refresh token must be a string',
   REFRESH_TOKEN_NOT_EXITS: 'Refresh token not exists',
   REFRESH_TOKEN_NOT_FOUND: 'Refresh token not found',
   REFRESH_TOKEN_SUCCESS: 'Refresh token success',
@@ -33,6 +32,9 @@ const USERS_MESSAGES = {
   EMAIL_ALREADY_VERIFIED_BEFORE: 'Email already verified before',
   EMAIL_VERIFY_SUCCESS: 'Email verify success',
   RESEND_VERIFY_EMAIL_SUCCESS: 'Resend verify email success',
-  CHECK_EMAIL_TO_REST_PASSWORD: 'Check email to reset password'
+  CHECK_EMAIL_TO_REST_PASSWORD: 'Check email to reset password',
+  FORGOT_PASSWORD_TOKEN_IS_REQUIRED: 'Forgot password token is required',
+  INVALID_FORGOT_PASSWORD_TOKEN: 'Invalid forgot password token',
+  VERIFY_FORGOT_PASSWORD_TOKEN_SUCCESS: 'Verify forgot password token success'
 }
 export default USERS_MESSAGES

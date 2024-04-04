@@ -5,7 +5,8 @@ import {
   forgotPasswordValidator,
   loginValidator,
   refreshTokenValidator,
-  registerValidator
+  registerValidator,
+  verifyForgotPasswordTokenValidator
 } from '../middlewares/users.middlewares'
 import {
   forgotPasswordController,
@@ -14,7 +15,8 @@ import {
   refreshTokenController,
   registerController,
   resendVerifyEmailController,
-  verifyEmailController
+  verifyEmailController,
+  verifyForgotPasswordTokenController
 } from '~/controllers/users.controllers'
 import { wrapRequestHandler } from '~/utils/handlers'
 import { log } from 'console'
@@ -70,4 +72,15 @@ router.post('/resend-verify-email', accessTokenValidator, wrapRequestHandler(res
  * Body : {email : string}
  */
 router.post('/forgot-password', forgotPasswordValidator, wrapRequestHandler(forgotPasswordController))
+/**
+ * Description. Verify forgot password token when user click on link in e=mail
+ * Path: /verify_forgot_password
+ * Method: POST
+ * Body : {forgot_password_token : string}
+ */
+router.post(
+  '/verify-forgot-password',
+  verifyForgotPasswordTokenValidator,
+  wrapRequestHandler(verifyForgotPasswordTokenController)
+)
 export default router
