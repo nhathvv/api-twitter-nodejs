@@ -7,6 +7,8 @@ import {
   refreshTokenValidator,
   registerValidator,
   resetPasswordValidator,
+  updateMeValidator,
+  verifiedUserValidator,
   verifyForgotPasswordTokenValidator
 } from '../middlewares/users.middlewares'
 import {
@@ -18,6 +20,7 @@ import {
   registerController,
   resendVerifyEmailController,
   resetPasswordController,
+  updateMeController,
   verifyEmailController,
   verifyForgotPasswordTokenController
 } from '~/controllers/users.controllers'
@@ -100,4 +103,11 @@ router.post('/reset-password', resetPasswordValidator, wrapRequestHandler(resetP
  * Headers : {Authorization : Bearer <access_token>}
  */
 router.get('/me', accessTokenValidator, wrapRequestHandler(getMeController))
+router.patch(
+  '/me',
+  accessTokenValidator,
+  verifiedUserValidator,
+  updateMeValidator,
+  wrapRequestHandler(updateMeController)
+)
 export default router

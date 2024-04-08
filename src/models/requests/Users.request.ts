@@ -7,6 +7,16 @@ export interface RegisterReqBody {
   password: string
   date_of_birth: Date
 }
+export interface updateMeReqBody {
+  name?: string
+  date_of_birth?: string
+  bio?: string
+  location?: string
+  website?: string
+  avatar?: string
+  username?: string
+  cover_photo?: string
+}
 export interface LogoutReqBody {
   refresh_token: string
 }
