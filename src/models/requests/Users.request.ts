@@ -7,6 +7,9 @@ export interface RegisterReqBody {
   password: string
   date_of_birth: Date
 }
+export interface followReqBody {
+  followed_user_id: string
+}
 export interface updateMeReqBody {
   name?: string
   date_of_birth?: string

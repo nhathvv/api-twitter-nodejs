@@ -6,6 +6,7 @@ import {
   RegisterReqBody,
   TokenPayload,
   VerifyEmailReqBody,
+  followReqBody,
   resetPasswordReqBody,
   updateMeReqBody
 } from '~/models/requests/Users.request'
@@ -140,4 +141,10 @@ export const updateMeController = async (req: Request<ParamsDictionary, any, upd
     message: USERS_MESSAGES.UPDATE_ME_SUCCESS,
     result: user
   })
+}
+export const followController = async (req: Request<ParamsDictionary, any, followReqBody>, res: Response) => {
+  const { user_id } = req.decoded_authorization as TokenPayload
+  const followed_user_id = req.body.followed_user_id
+  const result = await usersService.follow(user_id, followed_user_id)
+  return res.status(HTTP_STATUS.OK).json(result)
 }
