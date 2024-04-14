@@ -52,5 +52,6 @@ const USERS_MESSAGES = {
   IMAGE_MUST_BE_A_STRING: 'Image must be a string',
   IMAGE_LENGTH_MUST_BE_FROM_1_TO_400: 'Image length must be from 1 to 400',
   UPDATE_ME_SUCCESS: 'Update me success',
+  GET_PROFILE_SUCCESS: 'Get profile success'
 }
 export default USERS_MESSAGES

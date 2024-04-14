@@ -14,6 +14,7 @@ import {
 import {
   forgotPasswordController,
   getMeController,
+  getProfileController,
   loginController,
   logoutController,
   refreshTokenController,
@@ -26,6 +27,8 @@ import {
 } from '~/controllers/users.controllers'
 import { wrapRequestHandler } from '~/utils/handlers'
 import { get } from 'lodash'
+import { filterMiddleware } from '~/middlewares/common.middlewares'
+import { updateMeReqBody } from '~/models/requests/Users.request'
 const router = Router()
 
 /**
@@ -103,11 +106,33 @@ router.post('/reset-password', resetPasswordValidator, wrapRequestHandler(resetP
  * Headers : {Authorization : Bearer <access_token>}
  */
 router.get('/me', accessTokenValidator, wrapRequestHandler(getMeController))
+/**
+ * Description. Update user info
+ * Path: /me
+ * Method: PATCH
+ * Headers : {Authorization : Bearer <access_token>}
+ */
 router.patch(
   '/me',
   accessTokenValidator,
   verifiedUserValidator,
   updateMeValidator,
+  filterMiddleware<updateMeReqBody>([
+    'name',
+    'date_of_birth',
+    'bio',
+    'location',
+    'website',
+    'avatar',
+    'username',
+    'cover_photo'
+  ]),
   wrapRequestHandler(updateMeController)
 )
+/**
+ * Description. Get user profile
+ * Path: /:username
+ * Method: GET
+ */
+router.get('/:username', wrapRequestHandler(getProfileController))
 export default router

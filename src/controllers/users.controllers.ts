@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import {
+  GetProfileReqParams,
   LogoutReqBody,
   RefreshTokenReqBody,
   RegisterReqBody,
@@ -122,9 +123,18 @@ export const getMeController = async (req: Request, res: Response) => {
     result: user
   })
 }
+export const getProfileController = async (req: Request<GetProfileReqParams>, res: Response) => {
+  const { username } = req.params
+  const user = await usersService.getProfile(username)
+  return res.status(HTTP_STATUS.OK).json({
+    message: USERS_MESSAGES.GET_PROFILE_SUCCESS,
+    result: user
+  })
+}
 export const updateMeController = async (req: Request<ParamsDictionary, any, updateMeReqBody>, res: Response) => {
   const { user_id } = req.decoded_authorization as TokenPayload
   const body = req.body
+  console.log(body)
   const user = await usersService.updateMe(user_id, body)
   return res.status(HTTP_STATUS.OK).json({
     message: USERS_MESSAGES.UPDATE_ME_SUCCESS,
