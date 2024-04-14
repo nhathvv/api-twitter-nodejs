@@ -10,6 +10,9 @@ export interface RegisterReqBody {
 export interface followReqBody {
   followed_user_id: string
 }
+export interface unfollowReqBody {
+  user_id: string
+}
 export interface updateMeReqBody {
   name?: string
   date_of_birth?: string
