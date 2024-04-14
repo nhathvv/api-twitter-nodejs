@@ -13,6 +13,11 @@ export interface followReqBody {
 export interface unfollowReqBody {
   user_id: string
 }
+export interface changePasswordReqBody {
+  old_password: string
+  password: string
+  confirm_password: string
+}
 export interface updateMeReqBody {
   name?: string
   date_of_birth?: string
