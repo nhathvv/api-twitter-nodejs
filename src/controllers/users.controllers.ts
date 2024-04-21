@@ -20,6 +20,8 @@ import HTTP_STATUS from '~/constants/httpStatus'
 import { ObjectId } from 'mongodb'
 import { UserVerifyStatus } from '~/constants/enums'
 import User from '~/models/schemas/Users.schema'
+import { config } from 'dotenv'
+config()
 export const loginController = async (req: Request, res: Response) => {
   const { user }: any = req
   const user_id = user._id.toString()
@@ -28,6 +30,12 @@ export const loginController = async (req: Request, res: Response) => {
     message: USERS_MESSAGES.LOGIN_SUCCESS,
     result
   })
+}
+export const oauthController = async (req: Request, res: Response) => {
+  const { code } = req.query
+  const result = await usersService.oauth(code as string)
+  const urlRedirect = `${process.env.CLIENT_REDIRECT_CALLBACK}?access_token=${result.access_token}&refresh_token=${result.refresh_token}&new_user=${result.newUser}&verify=${result.verify}`
+  return res.redirect(urlRedirect)
 }
 
 export const registerController = async (req: Request<ParamsDictionary, any, RegisterReqBody>, res: Response) => {
