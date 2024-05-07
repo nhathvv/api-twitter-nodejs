@@ -10,12 +10,13 @@ export const initFolder = () => {
     fs.mkdirSync(uploadFolderPath, { recursive: true })
   }
 }
-export const handleUploadSingleImage = (req: Request) => {
+export const handleUploadImage = (req: Request) => {
   const form = formidable({
     uploadDir: UPLOAD_TEMP_DIR,
     keepExtensions: true,
     maxFileSize: 3 * 1024 * 1024,
-    maxFiles: 1,
+    maxFiles: 4,
+    maxTotalFileSize: 12 * 1024 * 1024,
     filter: function ({ name, originalFilename, mimetype }) {
       const isValid = name === 'image' && Boolean(mimetype?.includes('image'))
       if (!isValid) {
@@ -24,7 +25,7 @@ export const handleUploadSingleImage = (req: Request) => {
       return isValid
     }
   })
-  return new Promise<File>((resolve, reject) => {
+  return new Promise<File[]>((resolve, reject) => {
     form.parse(req, (err, fields, files) => {
       if (err) {
         return reject(err)
@@ -32,7 +33,7 @@ export const handleUploadSingleImage = (req: Request) => {
       if (!files.image) {
         return reject(new Error('No image uploaded'))
       }
-      return resolve((files.image as File[])[0])
+      return resolve(files.image as File[])
     })
   })
 }
