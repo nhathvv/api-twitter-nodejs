@@ -63,6 +63,8 @@ const USERS_MESSAGES = {
     'Username must be 4-15 characters long and contain only letters, numbers, and underscores, and must not be all numbers',
   USERNAME_ALREADY_EXISTS: 'Username already exists',
   OLD_PASSWORD_IS_INCORRECT: 'Old password is incorrect',
-  GMAIL_NOT_VERIFIED: 'Gmail not verified'
+  GMAIL_NOT_VERIFIED: 'Gmail not verified',
+  UPLOAD_IMAGE_SUCCESS: 'Upload image success',
+  UPLOAD_VIDEO_SUCCESS: 'Upload video success'
 }
 export default USERS_MESSAGES
