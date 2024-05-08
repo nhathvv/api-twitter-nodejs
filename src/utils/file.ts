@@ -1,8 +1,7 @@
 import { Request, Response } from 'express'
 import fs from 'fs'
-import path from 'path'
 import formidable, { File } from 'formidable'
-import { UPLOAD_IMAGE_DIR, UPLOAD_IMAGE_TEMP_DIR, UPLOAD_VIDEO_DIR, UPLOAD_VIDEO_TEMP_DIR } from '~/constants/dir'
+import { UPLOAD_IMAGE_TEMP_DIR, UPLOAD_VIDEO_DIR, UPLOAD_VIDEO_TEMP_DIR } from '~/constants/dir'
 
 export const initFolder = () => {
   ;[UPLOAD_IMAGE_TEMP_DIR, UPLOAD_VIDEO_TEMP_DIR].forEach((dir) => {
@@ -46,12 +45,11 @@ export const handleUploadVideo = (req: Request) => {
     maxFiles: 4,
     maxTotalFileSize: 12 * 1024 * 1024,
     filter: function ({ name, originalFilename, mimetype }) {
-      // const isValid = name === 'video' && Boolean(mimetype?.includes('video'))
-      // if (!isValid) {
-      //   form.emit('error' as any, new Error('Invalid file type') as any)
-      // }
-      // return isValid
-      return true
+      const isValid = name === 'video' && Boolean(mimetype?.includes('mp4') || mimetype?.includes('quicktime'))
+      if (!isValid) {
+        form.emit('error' as any, new Error('Invalid file type') as any)
+      }
+      return isValid
     }
   })
   return new Promise<File[]>((resolve, reject) => {
