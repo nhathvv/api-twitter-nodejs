@@ -65,6 +65,7 @@ const USERS_MESSAGES = {
   OLD_PASSWORD_IS_INCORRECT: 'Old password is incorrect',
   GMAIL_NOT_VERIFIED: 'Gmail not verified',
   UPLOAD_IMAGE_SUCCESS: 'Upload image success',
-  UPLOAD_VIDEO_SUCCESS: 'Upload video success'
+  UPLOAD_VIDEO_SUCCESS: 'Upload video success',
+  GET_VIDEO_STATUS_SUCCESS: 'Get video status success',
 }
 export default USERS_MESSAGES
