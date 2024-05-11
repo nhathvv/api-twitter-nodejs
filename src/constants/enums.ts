@@ -11,5 +11,6 @@ export enum TokenTypes {
 }
 export enum MediaTypes {
   Image,
-  Video
+  Video,
+  HLS
 }

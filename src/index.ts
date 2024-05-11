@@ -7,12 +7,14 @@ import { initFolder } from './utils/file'
 import { config } from 'dotenv'
 import { UPLOAD_IMAGE_DIR, UPLOAD_VIDEO_DIR } from './constants/dir'
 import staticsRouter from './routes/statics.routes'
+import cors from 'cors'
 config()
 // Connect to MongoDB
 databaseService.connect()
 const app = express()
 const port = process.env.PORT || 4000
 app.use(express.json())
+app.use(cors())
 // Init folder for upload
 initFolder()
 app.use('/users', userRouter)

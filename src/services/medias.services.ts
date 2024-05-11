@@ -8,6 +8,8 @@ import { isProduction } from '~/constants/config'
 import { config } from 'dotenv'
 import { MediaTypes } from '~/constants/enums'
 import { Media } from '~/models/Others'
+import { encodeHLSWithMultipleVideoStreams } from '~/utils/video'
+import { promises as fsPromise } from 'fs'
 config()
 class MediaService {
   async uploadImage(req: Request) {
@@ -29,14 +31,31 @@ class MediaService {
     return result
   }
   async uploadVideo(req: Request) {
-    const videos = await handleUploadVideo(req)
+    const files = await handleUploadVideo(req)
     const result: Media[] = await Promise.all(
-      videos.map(async (video) => {
+      files.map(async (file) => {
         return {
           url: isProduction
-            ? `${process.env.HOST}/medias/${video.newFilename}`
-            : `http://localhost:4000/static/video/${video.newFilename}`,
+            ? `${process.env.HOST}/medias/${file.newFilename}`
+            : `http://localhost:4000/static/video/${file.newFilename}`,
           type: MediaTypes.Video
+        }
+      })
+    )
+    return result
+  }
+  async uploadVideoHLS(req: Request) {
+    const files = await handleUploadVideo(req)
+    const result: Media[] = await Promise.all(
+      files.map(async (file) => {
+        await encodeHLSWithMultipleVideoStreams(file.filepath)
+        await fsPromise.unlink(file.filepath)
+        const newName = getNameFromFullName(file.newFilename)
+        return {
+          url: isProduction
+            ? `${process.env.HOST}/medias/video-hls/${newName}.m3u8`
+            : `http://localhost:4000/static/video-hls/${newName}.m3u8`,
+          type: MediaTypes.HLS
         }
       })
     )

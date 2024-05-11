@@ -1,9 +1,10 @@
-import { Request, Response } from 'express'
+import e, { Request, Response } from 'express'
 import HTTP_STATUS from '~/constants/httpStatus'
 import path from 'path'
 import { UPLOAD_VIDEO_DIR } from '~/constants/dir'
 import fs from 'fs'
 import mime from 'mime-types'
+
 export const servingVideoStreamController = async (req: Request, res: Response) => {
   const range = req.headers.range
   if (!range) {
@@ -25,4 +26,14 @@ export const servingVideoStreamController = async (req: Request, res: Response) 
   })
   const videoStreams = fs.createReadStream(videoPath, { start, end })
   videoStreams.pipe(res)
+}
+export const servingM3U8Controller = async (req: Request, res: Response) => {
+  const { id } = req.params
+  const videoPath = path.resolve(UPLOAD_VIDEO_DIR, id, 'master.m3u8')
+  return res.sendFile(videoPath)
+}
+export const servingSegmentController = async (req: Request, res: Response) => {
+  const { id, v, segment } = req.params
+  const videoPath = path.resolve(UPLOAD_VIDEO_DIR, id, v, segment)
+  return res.sendFile(videoPath)
 }
