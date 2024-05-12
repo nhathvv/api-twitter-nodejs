@@ -22,6 +22,33 @@ class DatabaseService {
       console.error('Error connecting to MongoDB:', error)
     }
   }
+  async indexUsers() {
+    const exits = await this.users.indexExists(['email_1', 'username_1', 'email_1_password_1'])
+    if (!exits) {
+      this.users.createIndex({ email: 1, password: 1 })
+      this.users.createIndex({ email: 1 }, { unique: true })
+      this.users.createIndex({ username: 1 }, { unique: true })
+    }
+  }
+  async indexRefreshTokens() {
+    const exits = await this.refreshTokens.indexExists(['token_1', 'exp_1'])
+    if (!exits) {
+      this.refreshTokens.createIndex({ token: 1 }, { unique: true })
+      this.refreshTokens.createIndex({ exp: 1 }, { expireAfterSeconds: 0 })
+    }
+  }
+  async indexFollowers() {
+    const exits = await this.followers.indexExists(['user_id_1_followed_user_id_1'])
+    if (!exits) {
+      this.followers.createIndex({ user_id: 1, followed_user_id: 1 })
+    }
+  }
+  async indexVideoStatus() {
+    const exits = await this.videoStatus.indexExists(['name_1'])
+    if (!exits) {
+      this.videoStatus.createIndex({ name: 1 }, { unique: true })
+    }
+  }
   get users(): Collection<User> {
     return this.db.collection(process.env.DB_COLLECTION_USER as string)
   }

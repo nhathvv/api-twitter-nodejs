@@ -26,9 +26,8 @@ class UsersService {
   private signRefreshToken({ user_id, verify, exp }: { user_id: string; verify: UserVerifyStatus; exp?: number }) {
     if (exp) {
       return signToken({
-        payload: { user_id, token_type: TokenTypes.RefreshToken, verify, exp},
-        privateKey: process.env.JWT_SECRET_REFRESH_TOKEN as string,
-
+        payload: { user_id, token_type: TokenTypes.RefreshToken, verify, exp },
+        privateKey: process.env.JWT_SECRET_REFRESH_TOKEN as string
       })
     }
     return signToken({
@@ -86,7 +85,7 @@ class UsersService {
       user_id: user_id.toString(),
       verify: UserVerifyStatus.Unverified
     })
-    const {iat,exp} = await this.decodeRefreshToken(refresh_token)
+    const { iat, exp } = await this.decodeRefreshToken(refresh_token)
     await databaseService.refreshTokens.insertOne(
       new RefreshTokens({
         user_id: new ObjectId(user_id),
@@ -146,7 +145,7 @@ class UsersService {
         user_id: user._id.toString(),
         verify: user.verify
       })
-      const {iat,exp} = await this.decodeRefreshToken(refresh_token)
+      const { iat, exp } = await this.decodeRefreshToken(refresh_token)
       await databaseService.refreshTokens.insertOne(
         new RefreshTokens({
           user_id: new ObjectId(user._id),
@@ -174,7 +173,7 @@ class UsersService {
   }
   async login({ user_id, verify }: { user_id: string; verify: UserVerifyStatus }) {
     const [access_token, refresh_token] = await this.signAccessTokenAndRefreshToken({ user_id, verify })
-    const {iat,exp} = await this.decodeRefreshToken(refresh_token)
+    const { iat, exp } = await this.decodeRefreshToken(refresh_token)
     await databaseService.refreshTokens.insertOne(
       new RefreshTokens({
         user_id: new ObjectId(user_id),

@@ -10,7 +10,12 @@ import staticsRouter from './routes/statics.routes'
 import cors from 'cors'
 config()
 // Connect to MongoDB
-databaseService.connect()
+databaseService.connect().then(() => {
+  databaseService.indexUsers()
+  databaseService.indexRefreshTokens()
+  databaseService.indexFollowers()
+  databaseService.indexVideoStatus()
+})
 const app = express()
 const port = process.env.PORT || 4000
 app.use(express.json())
