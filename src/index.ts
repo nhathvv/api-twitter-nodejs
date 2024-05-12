@@ -8,6 +8,7 @@ import { config } from 'dotenv'
 import { UPLOAD_IMAGE_DIR, UPLOAD_VIDEO_DIR } from './constants/dir'
 import staticsRouter from './routes/statics.routes'
 import cors from 'cors'
+import tweetsRouter from './routes/tweets.routes'
 config()
 // Connect to MongoDB
 databaseService.connect().then(() => {
@@ -24,8 +25,9 @@ app.use(cors())
 initFolder()
 app.use('/users', userRouter)
 app.use('/medias', mediasRouter)
+app.use('/statics/', staticsRouter)
+app.use('/tweets', tweetsRouter)
 app.use('/static', express.static(UPLOAD_IMAGE_DIR))
-app.use('/static/', staticsRouter)
 // Defaut error handler
 app.use(defaultErrorHandler)
 app.listen(port, () => {
