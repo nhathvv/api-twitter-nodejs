@@ -10,6 +10,7 @@ import staticsRouter from './routes/statics.routes'
 import cors from 'cors'
 import tweetsRouter from './routes/tweets.routes'
 import bookmarksRoutes from './routes/bookmarks.routes'
+import likesRoutes from './routes/likes.routes'
 config()
 // Connect to MongoDB
 databaseService.connect().then(() => {
@@ -29,6 +30,7 @@ app.use('/medias', mediasRouter)
 app.use('/statics/', staticsRouter)
 app.use('/tweets', tweetsRouter)
 app.use('/bookmarks', bookmarksRoutes)
+app.use('/likes/', likesRoutes)
 app.use('/static', express.static(UPLOAD_IMAGE_DIR))
 // Defaut error handler
 app.use(defaultErrorHandler)

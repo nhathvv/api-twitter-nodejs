@@ -81,6 +81,12 @@ export const TWEET_MESSAGES = {
   CREATE_TWEET_SUCCESS: 'Create tweet success'
 }
 export const BOOKMARK_MESSAGES = {
-  BOOKMARK_SUCCESSFULLY: 'Bookmark successfully'
+  BOOKMARK_SUCCESSFULLY: 'Bookmark successfully',
+  UNBOOKMARK_SUCCESSFULLY: 'Unbookmark successfully',
+  UNBOOKMARK_BY_BOOKMARK_ID_SUCCESSFULLY: 'Unbookmark by bookmark id successfully'
+}
+export const LIKE_MESSAGES = {
+  LIKE_SUCCESSFULLY: 'Like successfully',
+  UNLIKE_SUCCESSFULLY: 'Unlike successfully'
 }
 export default USERS_MESSAGES
