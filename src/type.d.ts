@@ -1,4 +1,5 @@
 import { TokenPayload } from './models/requests/Users.request'
+import Tweet from './models/schemas/Tweets.schema'
 import User from './models/schemas/Users.schema'
 import { Request } from 'express'
 
@@ -9,5 +10,6 @@ declare module 'express' {
     decoded_refresh_token?: TokenPayload
     decoded_email_verify_token?: TokenPayload
     decoded_forgot_password_token?: TokenPayload
+    tweet?: Tweet
   }
 }
