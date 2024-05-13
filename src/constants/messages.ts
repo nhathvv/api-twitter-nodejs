@@ -80,4 +80,7 @@ export const TWEET_MESSAGES = {
   MEDIAS_MUST_BE_AN_ARRAY_OF_MEDIA_ID: 'Medias must be an array of media id',
   CREATE_TWEET_SUCCESS: 'Create tweet success'
 }
+export const BOOKMARK_MESSAGES = {
+  BOOKMARK_SUCCESSFULLY: 'Bookmark successfully'
+}
 export default USERS_MESSAGES
