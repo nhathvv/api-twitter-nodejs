@@ -4,6 +4,7 @@ import User from '~/models/schemas/Users.schema'
 import { RefreshTokens } from '~/models/schemas/RefreshTokens.schema'
 import { Followers } from '~/models/schemas/Followers.schema'
 import { VideoStatus } from '~/models/schemas/VideoStatus.schema'
+import Tweet from '~/models/schemas/Tweets.schema'
 config()
 
 const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@twitter.rpneoyv.mongodb.net/?retryWrites=true&w=majority&appName=Twitter`
@@ -60,6 +61,9 @@ class DatabaseService {
   }
   get videoStatus(): Collection<VideoStatus> {
     return this.db.collection(process.env.DB_COLLECTION_VIDEO_STATUS as string)
+  }
+  get tweets(): Collection<Tweet> {
+    return this.db.collection(process.env.DB_COLLECTION_TWEET as string)
   }
 }
 
