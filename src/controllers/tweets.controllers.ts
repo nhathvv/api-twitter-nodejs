@@ -16,10 +16,38 @@ export const createTweetController = async (req: Request<ParamsDictionary, any, 
   })
 }
 export const getTweetController = async (req: Request, res: Response) => {
-  const { tweet_id } = req.params
-  const result = await tweetService.getTweet(tweet_id)
+  const result = await tweetService.icraseView(req.params.tweet_id, req.decoded_authorization?.user_id)
+  const tweet = {
+    ...req.tweet,
+    user_views: result.user_views,
+    guest_views: result.guest_views,
+    views: result.user_views + result.guest_views
+  }
   return res.status(200).json({
     message: TWEET_MESSAGES.GET_TWEET_SUCCESS,
-    result
+    result: tweet
+  })
+}
+export const getTweetChildrenController = async (req: Request, res: Response) => {
+  const tweet_type = Number(req.query.tweet_type as string)
+  const page = Number(req.query.page as string)
+  const limit = Number(req.query.limit as string)
+  const tweet_id = req.params.tweet_id
+
+  const {tweets,countTweets} = await tweetService.getTweetChildren({
+    tweet_id,
+    tweet_type,
+    page,
+    limit
+  })
+  return res.status(200).json({
+    message: TWEET_MESSAGES.GET_TWEET_CHILDREN_SUCCESS,
+    result: {
+      tweets,
+      limit,
+      page,
+      total_page: Math.ceil(countTweets / limit),
+      tweet_type
+    }
   })
 }
