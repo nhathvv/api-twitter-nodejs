@@ -11,10 +11,12 @@ export interface TweetRequestBody {
   mentions: string[] // user_id[]
   medias: Media[]
 }
-export interface TweetReqQuery extends Query {
+export interface TweetReqQuery extends Query, Pagination {
+  tweet_type: string
+}
+export interface Pagination {
   page: string
   limit: string
-  tweet_type: string
 }
 export interface TweetIdReqParams extends ParamsDictionary {
   tweet_id: string

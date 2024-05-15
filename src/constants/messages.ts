@@ -84,7 +84,8 @@ export const TWEET_MESSAGES = {
   GET_TWEET_SUCCESS: 'Get tweet success',
   UNAUTHORIZED_TWEET: 'Unauthorized tweet',
   TWEET_NOT_PUBLIC: 'Tweet not public',
-  GET_TWEET_CHILDREN_SUCCESS: 'Get tweet children success'
+  GET_TWEET_CHILDREN_SUCCESS: 'Get tweet children success',
+  GET_NEW_FEEDS_SUCCESS: 'Get new feeds success'
 }
 export const BOOKMARK_MESSAGES = {
   BOOKMARK_SUCCESSFULLY: 'Bookmark successfully',

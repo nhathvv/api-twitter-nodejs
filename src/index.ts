@@ -11,6 +11,7 @@ import cors from 'cors'
 import tweetsRouter from './routes/tweets.routes'
 import bookmarksRoutes from './routes/bookmarks.routes'
 import likesRoutes from './routes/likes.routes'
+// import './utils/fake'
 config()
 // Connect to MongoDB
 databaseService.connect().then(() => {
