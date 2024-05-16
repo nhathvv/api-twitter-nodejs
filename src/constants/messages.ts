@@ -97,6 +97,11 @@ export const LIKE_MESSAGES = {
   UNLIKE_SUCCESSFULLY: 'Unlike successfully'
 }
 export const SEARCH_MESSAGES = {
-  SEARCH_SUCCESS: 'Search success'
+  SEARCH_SUCCESS: 'Search success',
+  CONTENT_MUST_BE_A_STRING: 'Content must be a string',
+  MEDIA_TYPE_MUST_BE_A_STRING: 'Media type must be a string',
+  INVALID_MEDIA_TYPE: 'Invalid media type',
+  PEOPLE_FOLLOW_MUST_BE_A_STRING: 'People follow must be a string',
+  INVALID_PEOPLE_FOLLOW: 'Invalid people follow'
 }
 export default USERS_MESSAGES

@@ -13,7 +13,9 @@ export const searchController = async (req: Request<ParamsDictionary, any, any, 
     content,
     limit,
     page,
-    user_id
+    user_id,
+    media_type: req.query.media_type,
+    people_follow: req.query.people_follow
   })
   return res.status(200).json({
     message: SEARCH_MESSAGES.SEARCH_SUCCESS,

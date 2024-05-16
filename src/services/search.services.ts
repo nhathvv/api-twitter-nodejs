@@ -1,19 +1,65 @@
 import { ObjectId } from 'mongodb'
 import databaseService from './database.services'
 import Tweet from '~/models/schemas/Tweets.schema'
-import { TweetType } from '~/constants/enums'
+import { MediaTypeQuery, MediaTypes, PeopleFollow, TweetType } from '~/constants/enums'
 
 class searchServices {
-  async search({ content, limit, page, user_id }: { content: string; limit: number; page: number; user_id: string }) {
+  async search({
+    content,
+    limit,
+    page,
+    user_id,
+    media_type,
+    people_follow
+  }: {
+    content: string
+    limit: number
+    page: number
+    user_id: string
+    media_type?: MediaTypeQuery
+    people_follow?: PeopleFollow
+  }) {
+    const $match: any = {
+      $text: {
+        $search: content
+      }
+    }
+    if (media_type) {
+      if (media_type === MediaTypeQuery.Image) {
+        $match['medias.type'] = MediaTypes.Image
+      }
+      if (media_type === MediaTypeQuery.Video) {
+        $match['medias.type'] = {
+          $in: [MediaTypes.Video, MediaTypes.HLS]
+        }
+      }
+    }
+    if (people_follow && people_follow === '1') {
+      const followed_user_id = await databaseService.followers
+        .find(
+          {
+            user_id: new ObjectId(user_id)
+          },
+          {
+            projection: {
+              followed_user_id: 1,
+              _id: 0
+            }
+          }
+        )
+        .toArray()
+      const ids = followed_user_id.map((item) => item.followed_user_id) as ObjectId[]
+      ids.push(new ObjectId(user_id))
+      $match['user_id'] = {
+        $in: ids
+      }
+    }
+
     const [tweets, total] = await Promise.all([
       databaseService.tweets
         .aggregate<Tweet>([
           {
-            $match: {
-              $text: {
-                $search: content
-              }
-            }
+            $match
           },
           {
             $lookup: {
@@ -173,11 +219,7 @@ class searchServices {
       databaseService.tweets
         .aggregate([
           {
-            $match: {
-              $text: {
-                $search: content
-              }
-            }
+            $match
           },
           {
             $lookup: {
