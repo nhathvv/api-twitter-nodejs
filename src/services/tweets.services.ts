@@ -242,14 +242,15 @@ class TweetsService {
         }
       )
       .toArray()
-    const followed_users_ids = followed_user_id.map((item) => item.followed_user_id) as ObjectId[]
+    const ids = followed_user_id.map((item) => item.followed_user_id) as ObjectId[]
+    ids.push(new ObjectId(user_id))
     const [tweets, total] = await Promise.all([
       databaseService.tweets
         .aggregate<Tweet>([
           {
             $match: {
               user_id: {
-                $in: followed_users_ids
+                $in: ids
               }
             }
           },
@@ -416,7 +417,7 @@ class TweetsService {
           {
             $match: {
               user_id: {
-                $in: followed_users_ids
+                $in: ids
               }
             }
           },

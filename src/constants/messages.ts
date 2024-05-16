@@ -96,4 +96,7 @@ export const LIKE_MESSAGES = {
   LIKE_SUCCESSFULLY: 'Like successfully',
   UNLIKE_SUCCESSFULLY: 'Unlike successfully'
 }
+export const SEARCH_MESSAGES = {
+  SEARCH_SUCCESS: 'Search success'
+}
 export default USERS_MESSAGES

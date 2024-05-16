@@ -53,6 +53,12 @@ class DatabaseService {
       this.videoStatus.createIndex({ name: 1 }, { unique: true })
     }
   }
+  async indexTweets() {
+    const exits = await this.tweets.indexExists(['content_text'])
+    if (!exits) {
+      this.tweets.createIndex({ content: 'text' }, { default_language: 'none' })
+    }
+  }
   get users(): Collection<User> {
     return this.db.collection(process.env.DB_COLLECTION_USER as string)
   }
