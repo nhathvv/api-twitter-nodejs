@@ -12,7 +12,7 @@ import tweetsRouter from './routes/tweets.routes'
 import bookmarksRoutes from './routes/bookmarks.routes'
 import likesRoutes from './routes/likes.routes'
 import searchRoutes from './routes/search.routes'
-// import './utils/fake'
+import './utils/email'
 config()
 // Connect to MongoDB
 databaseService.connect().then(() => {

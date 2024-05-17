@@ -12,6 +12,7 @@ import USERS_MESSAGES from '~/constants/messages'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { Followers } from '~/models/schemas/Followers.schema'
 import axios from 'axios'
+import { sendVerifyForgotPasswordEmail, sendVerifyRegisterEmail } from '~/utils/email'
 config()
 class UsersService {
   private signAccessToken({ user_id, verify }: { user_id: string; verify: UserVerifyStatus }) {
@@ -72,6 +73,7 @@ class UsersService {
       verify: UserVerifyStatus.Unverified
     })) as string
     console.log('email_verify_token', email_verify_token)
+    console.log(payload.email)
     const user = new User({
       ...payload,
       _id: user_id,
@@ -94,6 +96,7 @@ class UsersService {
         exp
       })
     )
+    await sendVerifyRegisterEmail(payload.email, email_verify_token)
     return {
       access_token,
       refresh_token
@@ -241,12 +244,13 @@ class UsersService {
       refresh_token
     }
   }
-  async resendVerifyEmail(user_id: string) {
+  async resendVerifyEmail(user_id: string, email: string) {
     const email_verify_token = (await this.signEmailVerifyToken({
       user_id,
       verify: UserVerifyStatus.Unverified
     })) as string
     console.log('Resend verify email token: ', email_verify_token)
+    await sendVerifyRegisterEmail(email, email_verify_token)
     await databaseService.users.updateOne(
       { _id: new ObjectId(user_id) },
       { $set: { email_verify_token }, $currentDate: { updated_at: true } }
@@ -255,9 +259,9 @@ class UsersService {
       message: USERS_MESSAGES.RESEND_VERIFY_EMAIL_SUCCESS
     }
   }
-  async forgotPassword({ user_id, verify }: { user_id: string; verify: UserVerifyStatus }) {
+  async forgotPassword({ user_id, verify, email }: { user_id: string; verify: UserVerifyStatus; email: string }) {
     const forgot_password_token = (await this.signForgotPasswordToken({ user_id, verify })) as string
-    console.log('Forgot password token: ', forgot_password_token)
+    await sendVerifyForgotPasswordEmail(email, forgot_password_token)
     await databaseService.users.updateOne(
       { _id: new ObjectId(user_id) },
       { $set: { forgot_password_token }, $currentDate: { updated_at: true } }
