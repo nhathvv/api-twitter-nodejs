@@ -12,6 +12,9 @@ import { encodeHLSWithMultipleVideoStreams } from '~/utils/video'
 import { promises as fsPromise } from 'fs'
 import databaseService from './database.services'
 import { VideoStatus } from '~/models/schemas/VideoStatus.schema'
+import { uploadFileToS3 } from '~/utils/s3'
+import mimeTypes from 'mime-types'
+import { CompleteMultipartUploadCommandOutput } from '@aws-sdk/client-s3'
 config()
 class Queue {
   items: string[]
@@ -90,13 +93,17 @@ class MediaService {
     const result: Media[] = await Promise.all(
       files.map(async (file) => {
         const newName = getNameFromFullName(file.newFilename)
-        const newPath = path.resolve(UPLOAD_IMAGE_DIR, `${newName}.jpg`)
+        const newFullName = `${newName}.jpg`
+        const newPath = path.join(UPLOAD_IMAGE_DIR, newFullName)
         await sharp(file.filepath).jpeg({}).toFile(newPath)
-        fs.unlinkSync(file.filepath)
+        const s3Result = await uploadFileToS3({
+          filename: 'images/' + newFullName,
+          filepath: newPath,
+          contentType: mimeTypes.lookup(newPath) || 'image/jpeg'
+        })
+        await Promise.all([fsPromise.unlink(file.filepath), fsPromise.unlink(newPath)])
         return {
-          url: isProduction
-            ? `${process.env.HOST}/medias/${newName}.jpg`
-            : `http://localhost:4000/static/${newName}.jpg`,
+          url: (s3Result as CompleteMultipartUploadCommandOutput).Location as string,
           type: MediaTypes.Image
         }
       })
@@ -107,10 +114,13 @@ class MediaService {
     const files = await handleUploadVideo(req)
     const result: Media[] = await Promise.all(
       files.map(async (file) => {
+        const s3Result = await uploadFileToS3({
+          filename: 'videos/' + file.newFilename,
+          filepath: file.filepath,
+          contentType: mimeTypes.lookup(file.filepath) || 'video/mp4'
+        })
         return {
-          url: isProduction
-            ? `${process.env.HOST}/medias/${file.newFilename}`
-            : `http://localhost:4000/static/video/${file.newFilename}`,
+          url: (s3Result as CompleteMultipartUploadCommandOutput).Location as string,
           type: MediaTypes.Video
         }
       })
