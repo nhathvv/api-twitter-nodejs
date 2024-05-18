@@ -59,7 +59,7 @@ paths:
         required: true
       responses:
         '200':
-          description: Đăng nhập thành công
+          description: Login success
           content:
             application/json:
               schema:
@@ -85,6 +85,7 @@ paths:
           content:
             application/json:
               schema:
+                message: Update me success
                 $ref: '#/components/schemas/User'
     patch:
       tags:
@@ -101,6 +102,14 @@ paths:
             schema:
               $ref: '#/components/schemas/UpdateMeBody'
         required: true
+      responses:
+        default:
+          description: Cập nhật thông tin user thành công
+          content:
+            application/json:
+              schema:
+                message: Update me success
+                $ref: '#/components/schemas/User'
   /users/register:
     post:
       tags:
@@ -242,7 +251,7 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Kiểm tra email để reset mật khẩu
+                    example: Check email to reset password
   /users/verify-forgot-password:
     post:
       tags:
@@ -271,7 +280,7 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Xác thực link trong email để reset mật khẩu thành công
+                    example: Verify forgot password token success
   /users/reset-password:
     post:
       tags:
@@ -306,7 +315,7 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Reset mật khẩu thành công
+                    example: Change password success
   /users/{username}:
     get:
       tags:
@@ -360,7 +369,7 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Follow user thành công
+                    example: Follow success
   /users/{user_id}:
     delete:
       tags:
@@ -389,7 +398,7 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Unfollow user thành công
+                    example: Unfollow success
   /users/change-password:
     put:
       tags:
@@ -426,7 +435,7 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Đổi mật khẩu thành công
+                    example: Reset password success
   /tweets:
     post:
       tags:
@@ -453,7 +462,7 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Tạo tweet thành công
+                    example: Create tweet success
     get:
       tags:
         - tweets
@@ -487,7 +496,7 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Lấy danh sách tweet thành công
+                    example: 
                   result:
                     type: object
                     properties:
@@ -530,7 +539,7 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Lấy thông tin tweet theo id thành công
+                    example: Get tweet success
                   result:
                     $ref: '#/components/schemas/Tweet'
   /tweets/{tweet_id}/children:
@@ -579,7 +588,7 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Lấy danh sách tweet con theo id thành công
+                    example: Get tweet children success
                   result:
                     type: object
                     properties:
@@ -631,7 +640,7 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Upload ảnh thành công
+                    example: Upload image success
                   result:
                     type: array
                     items:
@@ -666,7 +675,7 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Upload video thành công
+                    example: Upload video success
                   result:
                     $ref: '#/components/schemas/Media'
   /likes:
@@ -830,7 +839,7 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Tìm kiếm tweet thành công
+                    example: Search success
                   result:
                     type: object
                     properties:
@@ -872,7 +881,7 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Stream video thành công
+                    example: Stream video success
   /statics/video-hls/{id}/master.m3u8:
     get:
       tags:
@@ -899,7 +908,7 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Stream video HLS thành công
+                    example: Stream video HLS success
   /statics/video-hls/:id/:v/:segment:
     get:
       tags:
@@ -940,5 +949,5 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Stream video HLS segment thành công
+                    example: Stream video HLS segment success
 

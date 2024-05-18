@@ -22,9 +22,17 @@ const options: swaggerJsdoc.Options = {
   definition: {
     openapi: '3.0.1',
     info: {
-      title: 'X clone (Twitter API)',
-      version: '1.0.0'
+      title: 'API X (Twitter)',
+      version: '1.0.0',
+      description:
+        'This project is an API I developed inspired by Twitter, featuring the reconstruction of various functionalities such as managing user information, tweets, media, bookmarks, likes, and followers'
     },
+    servers: [
+      {
+        url: 'https://api-x-nhathv.onrender.com/',
+        description: 'Production server'
+      }
+    ],
     components: {
       securitySchemes: {
         BearerAuth: {
