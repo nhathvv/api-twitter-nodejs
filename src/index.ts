@@ -29,7 +29,7 @@ const options: swaggerJsdoc.Options = {
     },
     servers: [
       {
-        url: 'https://api-x-nhathv.onrender.com/',
+        url: 'https://nhat-dev-twitter.onrender.com/',
         description: 'Production server'
       }
     ],
