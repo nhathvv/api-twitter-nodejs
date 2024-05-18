@@ -88,7 +88,7 @@ router.post('/verify-email', emailVerifyTokenValidator, wrapRequestHandler(verif
  * Headers : {Authorization: Bearer <access_token>}
  */
 router.post('/resend-verify-email', accessTokenValidator, wrapRequestHandler(resendVerifyEmailController))
-/**x
+/**
  * Description. Forgot password
  * Path: /forgot_password
  * Method: POST

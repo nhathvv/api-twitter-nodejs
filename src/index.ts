@@ -12,7 +12,38 @@ import tweetsRouter from './routes/tweets.routes'
 import bookmarksRoutes from './routes/bookmarks.routes'
 import likesRoutes from './routes/likes.routes'
 import searchRoutes from './routes/search.routes'
+import { createServer } from 'http'
+import { Server } from 'socket.io'
 import './utils/s3'
+import swaggerUi from 'swagger-ui-express'
+import swaggerJsdoc from 'swagger-jsdoc'
+
+const options: swaggerJsdoc.Options = {
+  definition: {
+    openapi: '3.0.1',
+    info: {
+      title: 'X clone (Twitter API)',
+      version: '1.0.0'
+    },
+    components: {
+      securitySchemes: {
+        BearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT'
+        }
+      }
+    },
+    security: [
+      {
+        BearerAuth: []
+      }
+    ],
+    persistAuthorization: true
+  },
+  apis: ['./openapi/*.yaml'] // files containing annotations as above
+}
+const openapiSpecification = swaggerJsdoc(options)
 config()
 // Connect to MongoDB
 databaseService.connect().then(() => {
@@ -28,6 +59,7 @@ app.use(express.json())
 app.use(cors())
 // Init folder for upload
 initFolder()
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification))
 app.use('/users', userRouter)
 app.use('/medias', mediasRouter)
 app.use('/statics/', staticsRouter)
@@ -36,8 +68,35 @@ app.use('/bookmarks', bookmarksRoutes)
 app.use('/likes/', likesRoutes)
 app.use('/search', searchRoutes)
 app.use('/static', express.static(UPLOAD_IMAGE_DIR))
+
 // Defaut error handler
 app.use(defaultErrorHandler)
-app.listen(port, () => {
+const httpServer = createServer(app)
+const io = new Server(httpServer, {
+  cors: {
+    origin: 'http://localhost:5173'
+  }
+})
+const users: {
+  [key: string]: {
+    socket_id: string
+  }
+} = {}
+// io.on('connection', (socket) => {
+//   console.log(`user ${socket.id} connected`)
+//   const user_id = socket.handshake.auth._id as string
+//   users[user_id] = {
+//     socket_id: socket.id
+//   }
+//   socket.on('private message', (data) => {
+//     const receiver_socket_id = users[data.to].socket_id
+//     socket.to(receiver_socket_id).emit('receive private message', {
+//       content: data.content,
+//       from: user_id
+//     })
+//   })
+// })
+
+httpServer.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })

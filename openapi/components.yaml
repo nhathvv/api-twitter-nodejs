@@ -1,0 +1,300 @@
+components:
+  schemas:
+    LoginBody:
+      type: object
+      properties:
+        email:
+          type: string
+          example: nhathv.21it@gmail.com
+        password:
+          type: string
+          example: Nhathv041@@
+    SuccessAuthentication:
+      type: object
+      properties:
+        access_token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjY0ODViNGU0NWQ4N2IyZGZiM2U5OTZiIiwidG9rZW5fdHlwZSI6MCwidmVyaWZ5IjoxLCJpYXQiOjE3MTYwNTI3NDYsImV4cCI6MTcxNjA1Mzk0Nn0.UEd2Vv2u_cQl0m7eVE_uilzLwco_gszsrfNAY-mshG4
+        refresh_token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjY0ODViNGU0NWQ4N2IyZGZiM2U5OTZiIiwidG9rZW5fdHlwZSI6MSwidmVyaWZ5IjoxLCJpYXQiOjE3MTYwNTI3NDYsImV4cCI6MTcyNDY5Mjc0Nn0.jud5cpXLBpLw7bwh_ig-j8VFmZsLXx9-USu-fKcwpzY
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: MongoId
+          example: 66485b4e45d87b2dfb3e996b
+        name:
+          type: string
+          example: Hoang Van Nhat
+        email:
+          type: string
+          example: nhathv.21it@gmail.com
+        date_of_birth:
+          type: string
+          format: ISO8601
+          example: 2024-03-30T16:33:36.990Z
+        created_at:
+          type: string
+          format: ISO8601
+          example: 2024-05-18T07:39:58.426Z
+        updated_at:
+          type: string
+          format: ISO8601
+          example: 2024-05-18T17:27:40.397Z
+        verify:
+          $ref: '#/components/schemas/UserVerifyStatus'
+        twitter_circle:
+          type: array
+          items:
+            type: string
+            format: MongoId
+          example: []
+        bio:
+          type: string
+          example: ''
+        location:
+          type: string
+          example: ''
+        website:
+          type: string
+          example: ''
+        username:
+          type: string
+          example: 'user66485b4e45d87b2dfb3e996b'
+        avatar:
+          type: string
+          example: ''
+        cover_photo:
+          type: string
+          example: ''
+    UserVerifyStatus:
+      type: number
+      enum: [Unverified, Verified, Banned]
+      example: 1
+    RegisterBody:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Hoang Van Nhat
+        email:
+          type: string
+          example: nhathv.73qb@gmail.com
+        password:
+          type: string
+          example: Nhathv041@@
+        confirm_password:
+          type: string
+          example: Nhathv041@@
+        date_of_birth:
+          type: string
+          format: ISO8601
+          example: 2023-06-08T10:17:31.096Z
+    UpdateMeBody:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Hoang Van Nhat
+        date_of_birth:
+          type: string
+          format: ISO8601
+          example: 2023-06-08T10:17:31.096Z
+        bio:
+          type: string
+          example: ''
+        location:
+          type: string
+          example: 'Da Nang'
+        website:
+          type: string
+          example: 'https://nhat-dev.vercel.app'
+        username:
+          type: string
+          example: 'nhathv'
+        avatar:
+          type: string
+          example: ''
+        cover_photo:
+          type: string
+          example: ''
+    TweetRequestBody:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/TweetType'
+        audience:
+          $ref: '#/components/schemas/TweetAudience'
+        content:
+          type: string
+          description: Nội dung tweet
+          example: 'This is my tweet.'
+        parent_id:
+          type: string
+          nullable: true
+          description: ID của tweet cha
+          example: 64be0ad2e43d2464394feedb
+        hashtags:
+          type: array
+          items:
+            type: string
+          description: Danh sách hashtag
+          example: ['hashtag1', 'hashtag2']
+        mentions:
+          type: array
+          items:
+            type: string
+          description: Danh sách user_id được đề cập
+          example: ['64be0ad2e43d2464394feedb', '64be0ad2e43d2464394feedc']
+        medias:
+          type: array
+          items:
+            $ref:
+          description: Danh sách media đính kèm
+    TweetType:
+      type: number
+      enum: [Tweet, Retweet, Comment, QuoteTweet]
+      example: 1
+    TweetAudience:
+      type: number
+      enum: [Everyone, TwitterCircle]
+      example: 1
+    PeopleFollow:
+      type: string
+      enum: [Anyone, Following]
+      example: '0'
+    EncodingStatus:
+      type: number
+      enum: [Pending, Processing, Success, Failed]
+      example: 1
+    MediaTypeQuery:
+      type: string
+      enum: [Image, Video]
+      example: image
+    MediaType:
+      type: number
+      enum: [Image, Video, HLS]
+      example: 1
+    Media:
+      type: object
+      properties:
+        url:
+          type: string
+          example: 'http://localhost:4000/images/avatars/johndoe.jpg'
+        type:
+          $ref: '#/components/schemas/MediaType'
+    Tweet:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: MongoId
+          description: ID của tweet
+          example: 64be0ad2e43d2464394feedb
+        user_id:
+          type: string
+          format: MongoId
+          description: ID của người dùng tạo tweet
+          example: 64be0ad2e43d2464394feedb
+        type:
+          $ref: '#/components/schemas/TweetType'
+        audience:
+          $ref: '#/components/schemas/TweetAudience'
+        content:
+          type: string
+          description: Nội dung tweet
+          example: 'This is my tweet.'
+        parent_id:
+          type: string
+          nullable: true
+          format: MongoId
+          description: ID của tweet cha
+          example: 64be0ad2e43d2464394feedb
+        hashtags:
+          type: array
+          items:
+            type: object
+            properties:
+              _id:
+                type: string
+                format: MongoId
+                description: ID của hashtag
+                example: 64be0ad2e43d2464394feedb
+              name:
+                type: string
+                description: Tên của hashtag
+                example: 'hashtag1'
+              created_at:
+                type: string
+                format: ISO8601
+                description: Thời gian tạo hashtag
+                example: 2023-03-08T12:00:00Z
+          description: Danh sách hashtag
+          example:
+            [
+              { _id: '64be0ad2e43d2464394feedb', name: 'hashtag1', created_at: '2023-03-08T12:00:00Z' },
+              { _id: '64be0ad2e43d2464394feedc', name: 'hashtag2', created_at: '2023-03-08T12:00:00Z' }
+            ]
+        mentions:
+          type: array
+          items:
+            type: object
+            properties:
+              _id:
+                type: string
+                format: MongoId
+                description: ID của user được đề cập
+                example: 64be0ad2e43d2464394feedb
+              name:
+                type: string
+                description: Tên của user được đề cập
+                example: 'John Doe'
+              username:
+                type: string
+                description: Username của user được đề cập
+                example: 'johndoe'
+              email:
+                type: string
+                description: Email của user được đề cập
+                example: duthanhduoc@gmail.com
+        medias:
+          type: array
+          items:
+            $ref: '#/components/schemas/Media'
+          description: Danh sách media đính kèm
+          example:
+            [
+              { url: 'http://localhost:4000/images/avatars/johndoe.jpg', type: 1 },
+              { url: 'http://localhost:4000/images/avatars/johndoe.jpg', type: 2 }
+            ]
+        retweet_count:
+          type: integer
+          description: Số lần retweet
+        comment_count:
+          type: integer
+          description: Số lần comment
+        quote_count:
+          type: integer
+          description: Số lần quote
+        bookmarks:
+          type: integer
+          description: Số lần bookmark
+        likes:
+          type: integer
+          description: Số lần like
+        guest_views:
+          type: integer
+          description: Số lần xem của khách
+        user_views:
+          type: integer
+          description: Số lần xem của người dùng
+        created_at:
+          type: string
+          format: date-time
+          description: Thời gian tạo tweet
+        updated_at:
+          type: string
+          format: date-time
+          description: Thời gian cập nhật tweet
