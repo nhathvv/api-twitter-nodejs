@@ -1,12 +1,10 @@
 import { Request, Response } from 'express'
-import { config } from 'dotenv'
 import { TokenPayload } from '~/models/requests/Users.request'
 import HTTP_STATUS from '~/constants/httpStatus'
 import bookmarkService from '~/services/bookmark.services'
 import { BOOKMARK_MESSAGES } from '~/constants/messages'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { BookmarkRequestBody } from '~/models/requests/Bookmarks.request'
-config()
 export const bookmarkTweetController = async (
   req: Request<ParamsDictionary, any, BookmarkRequestBody>,
   res: Response

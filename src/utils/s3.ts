@@ -1,15 +1,14 @@
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3'
 import { Upload } from '@aws-sdk/lib-storage'
-import dotenv from 'dotenv'
 import fs from 'fs'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { Response } from 'express'
-dotenv.config()
+import { envConfig } from '~/constants/config'
 const s3 = new S3Client({
-  region: process.env.AWS_REGION as string,
+  region: envConfig.awsRegion as string,
   credentials: {
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID as string
+    secretAccessKey: envConfig.awsSecretAccessKey as string,
+    accessKeyId: envConfig.awsAccessKeyId as string
   }
 })
 export const uploadFileToS3 = async ({

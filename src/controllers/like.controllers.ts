@@ -1,7 +1,5 @@
 import { Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
-import { config } from 'dotenv'
-config()
 import { LikeRequestBody } from '~/models/requests/Likes.request'
 import { TokenPayload } from '~/models/requests/Users.request'
 import { LIKE_MESSAGES } from '~/constants/messages'

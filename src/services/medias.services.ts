@@ -3,8 +3,7 @@ import sharp from 'sharp'
 import { Request } from 'express'
 import path from 'path'
 import { UPLOAD_IMAGE_DIR, UPLOAD_VIDEO_DIR } from '~/constants/dir'
-import { isProduction } from '~/constants/config'
-import { config } from 'dotenv'
+import { envConfig, isProduction } from '~/constants/config'
 import { EncodingStatus, MediaTypes } from '~/constants/enums'
 import { Media } from '~/models/Others'
 import { encodeHLSWithMultipleVideoStreams } from '~/utils/video'
@@ -14,8 +13,7 @@ import { VideoStatus } from '~/models/schemas/VideoStatus.schema'
 import { uploadFileToS3 } from '~/utils/s3'
 import mimeTypes from 'mime-types'
 import { CompleteMultipartUploadCommandOutput } from '@aws-sdk/client-s3'
-import { rimraf, rimrafSync } from 'rimraf'
-config()
+import {rimrafSync } from 'rimraf'
 class Queue {
   items: string[]
   encoding: boolean
@@ -148,7 +146,7 @@ class MediaService {
         const newFolder = getFolderPath(file.filepath)
         return {
           url: isProduction
-            ? `${process.env.HOST}/medias/video-hls/${newFolder}/master.m3u8`
+            ? `${envConfig.host}/medias/video-hls/${newFolder}/master.m3u8`
             : `http://localhost:4000/static/video-hls/${newFolder}/master.m3u8`,
           type: MediaTypes.HLS
         }

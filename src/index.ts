@@ -5,7 +5,6 @@ import defaultErrorHandler from './middlewares/error.middlewares'
 import mediasRouter from './routes/medias.routes'
 import { initFolder } from './utils/file'
 import { config } from 'dotenv'
-import { UPLOAD_IMAGE_DIR, UPLOAD_VIDEO_DIR } from './constants/dir'
 import staticsRouter from './routes/statics.routes'
 import cors from 'cors'
 import tweetsRouter from './routes/tweets.routes'
@@ -18,6 +17,7 @@ import './utils/s3'
 import swaggerUi from 'swagger-ui-express'
 import swaggerJsdoc from 'swagger-jsdoc'
 import './utils/file'
+import { envConfig } from './constants/config'
 
 const options: swaggerJsdoc.Options = {
   definition: {
@@ -63,7 +63,7 @@ databaseService.connect().then(() => {
   databaseService.indexTweets()
 })
 const app = express()
-const port = process.env.PORT || 4000
+const port = envConfig.port
 app.use(express.json())
 app.use(cors())
 // Init folder for upload
