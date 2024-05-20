@@ -1,9 +1,8 @@
-import { getNameFromFullName, handleUploadImage, handleUploadVideo } from '~/utils/file'
+import { getFiles, getNameFromFullName, handleUploadImage, handleUploadVideo } from '~/utils/file'
 import sharp from 'sharp'
 import { Request } from 'express'
 import path from 'path'
-import { UPLOAD_IMAGE_DIR } from '~/constants/dir'
-import fs from 'fs'
+import { UPLOAD_IMAGE_DIR, UPLOAD_VIDEO_DIR } from '~/constants/dir'
 import { isProduction } from '~/constants/config'
 import { config } from 'dotenv'
 import { EncodingStatus, MediaTypes } from '~/constants/enums'
@@ -15,6 +14,7 @@ import { VideoStatus } from '~/models/schemas/VideoStatus.schema'
 import { uploadFileToS3 } from '~/utils/s3'
 import mimeTypes from 'mime-types'
 import { CompleteMultipartUploadCommandOutput } from '@aws-sdk/client-s3'
+import {rimraf} from 'rimraf'
 config()
 class Queue {
   items: string[]
@@ -49,6 +49,18 @@ class Queue {
       try {
         await encodeHLSWithMultipleVideoStreams(videoPath)
         await fsPromise.unlink(videoPath)
+        const files = getFiles(path.resolve(UPLOAD_VIDEO_DIR, ''))
+        await Promise.all([
+          files.map((filepath) => {
+            const filename = filepath.replace(UPLOAD_VIDEO_DIR, '')
+            return uploadFileToS3({
+              filename: 'video-hls' + filename,
+              filepath: filepath,
+              contentType: mimeTypes.lookup(filepath) || 'video/mp4'
+            })
+          })
+        ])
+        rimraf(path.resolve(UPLOAD_VIDEO_DIR, idName))
         await databaseService.videoStatus.updateOne(
           { name: idName },
           {
@@ -132,11 +144,12 @@ class MediaService {
     const result: Media[] = await Promise.all(
       files.map(async (file) => {
         queue.enqueue(file.filepath)
-        const newName = getNameFromFullName(file.newFilename)
+        const parts = file.filepath.split('/')
+        const newName = parts[parts.length - 2]
         return {
           url: isProduction
-            ? `${process.env.HOST}/medias/video-hls/${newName}.m3u8`
-            : `http://localhost:4000/static/video-hls/${newName}.m3u8`,
+            ? `${process.env.HOST}/medias/video-hls/${newName}/master.m3u8`
+            : `http://localhost:4000/static/video-hls/${newName}/master.m3u8`,
           type: MediaTypes.HLS
         }
       })

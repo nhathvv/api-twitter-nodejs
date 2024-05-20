@@ -33,7 +33,6 @@ import {
   verifyForgotPasswordTokenController
 } from '~/controllers/users.controllers'
 import { wrapRequestHandler } from '~/utils/handlers'
-import { get } from 'lodash'
 import { filterMiddleware } from '~/middlewares/common.middlewares'
 import { updateMeReqBody } from '~/models/requests/Users.request'
 const router = Router()

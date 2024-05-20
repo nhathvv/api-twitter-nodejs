@@ -4,6 +4,7 @@ import path from 'path'
 import { UPLOAD_VIDEO_DIR } from '~/constants/dir'
 import fs from 'fs'
 import mime from 'mime-types'
+import { sendFileFromS3 } from '~/utils/s3'
 
 export const servingVideoStreamController = async (req: Request, res: Response) => {
   const range = req.headers.range
@@ -29,11 +30,9 @@ export const servingVideoStreamController = async (req: Request, res: Response) 
 }
 export const servingM3U8Controller = async (req: Request, res: Response) => {
   const { id } = req.params
-  const videoPath = path.resolve(UPLOAD_VIDEO_DIR, id, 'master.m3u8')
-  return res.sendFile(videoPath)
+  sendFileFromS3(res, `video-hls/${id}/master.m3u8`)
 }
 export const servingSegmentController = async (req: Request, res: Response) => {
   const { id, v, segment } = req.params
-  const videoPath = path.resolve(UPLOAD_VIDEO_DIR, id, v, segment)
-  return res.sendFile(videoPath)
+  sendFileFromS3(res, `video-hls/${id}/${v}/${segment}`)
 }

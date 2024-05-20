@@ -17,10 +17,11 @@ import { Server } from 'socket.io'
 import './utils/s3'
 import swaggerUi from 'swagger-ui-express'
 import swaggerJsdoc from 'swagger-jsdoc'
+import './utils/file'
 
 const options: swaggerJsdoc.Options = {
   definition: {
-    openapi: '3.0.1',
+    openapi: '3.1.0',
     info: {
       title: 'API X (Twitter)',
       version: '1.0.0',
@@ -75,7 +76,7 @@ app.use('/tweets', tweetsRouter)
 app.use('/bookmarks', bookmarksRoutes)
 app.use('/likes/', likesRoutes)
 app.use('/search', searchRoutes)
-app.use('/static', express.static(UPLOAD_IMAGE_DIR))
+app.use('/static', staticsRouter)
 
 // Defaut error handler
 app.use(defaultErrorHandler)
