@@ -35,7 +35,6 @@ export const uploadFileToS3 = async ({
   return parallelUploads3.done()
 }
 export const sendFileFromS3 = async (res: Response, filename: string) => {
-  console.log(filename)
   try {
     const cmd = new GetObjectCommand({
       Bucket: 'twitter-nhathv-ap-southeast-1',

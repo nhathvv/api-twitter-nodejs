@@ -90,5 +90,8 @@ export const getFiles = (dir: string, files: string[] = []) => {
   }
   return files
 }
-
-const dir = path.resolve(UPLOAD_VIDEO_DIR, 'v4v-BI6Su2n4oEurcQV5I')
+export const getFolderPath = (path: string) => {
+  const parts = path.split('/')
+  const newName = parts[parts.length - 2]
+  return newName
+}

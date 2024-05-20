@@ -1,4 +1,4 @@
-import { getFiles, getNameFromFullName, handleUploadImage, handleUploadVideo } from '~/utils/file'
+import { getFiles, getFolderPath, getNameFromFullName, handleUploadImage, handleUploadVideo } from '~/utils/file'
 import sharp from 'sharp'
 import { Request } from 'express'
 import path from 'path'
@@ -14,7 +14,7 @@ import { VideoStatus } from '~/models/schemas/VideoStatus.schema'
 import { uploadFileToS3 } from '~/utils/s3'
 import mimeTypes from 'mime-types'
 import { CompleteMultipartUploadCommandOutput } from '@aws-sdk/client-s3'
-import {rimraf} from 'rimraf'
+import { rimraf, rimrafSync } from 'rimraf'
 config()
 class Queue {
   items: string[]
@@ -34,7 +34,7 @@ class Queue {
     if (this.items.length > 0) {
       this.encoding = true
       const videoPath = this.items[0]
-      const idName = getNameFromFullName(videoPath.split('/').pop() as string)
+      const idName = getFolderPath(videoPath)
       await databaseService.videoStatus.updateOne(
         { name: idName },
         {
@@ -60,7 +60,6 @@ class Queue {
             })
           })
         ])
-        rimraf(path.resolve(UPLOAD_VIDEO_DIR, idName))
         await databaseService.videoStatus.updateOne(
           { name: idName },
           {
@@ -75,6 +74,8 @@ class Queue {
         this.items.shift()
         this.encoding = false
         console.log(`Encode ${videoPath} success`)
+        const nameFolder = getFolderPath(videoPath)
+        rimrafSync(path.resolve(UPLOAD_VIDEO_DIR, nameFolder))
         await this.processEncode()
       } catch (error) {
         await databaseService.videoStatus
@@ -144,12 +145,11 @@ class MediaService {
     const result: Media[] = await Promise.all(
       files.map(async (file) => {
         queue.enqueue(file.filepath)
-        const parts = file.filepath.split('/')
-        const newName = parts[parts.length - 2]
+        const newFolder = getFolderPath(file.filepath)
         return {
           url: isProduction
-            ? `${process.env.HOST}/medias/video-hls/${newName}/master.m3u8`
-            : `http://localhost:4000/static/video-hls/${newName}/master.m3u8`,
+            ? `${process.env.HOST}/medias/video-hls/${newFolder}/master.m3u8`
+            : `http://localhost:4000/static/video-hls/${newFolder}/master.m3u8`,
           type: MediaTypes.HLS
         }
       })
