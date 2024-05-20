@@ -6,7 +6,7 @@ import mediasRouter from './routes/medias.routes'
 import { initFolder } from './utils/file'
 import { config } from 'dotenv'
 import staticsRouter from './routes/statics.routes'
-import cors from 'cors'
+import cors, { CorsOptions } from 'cors'
 import tweetsRouter from './routes/tweets.routes'
 import bookmarksRoutes from './routes/bookmarks.routes'
 import likesRoutes from './routes/likes.routes'
@@ -17,8 +17,9 @@ import './utils/s3'
 import swaggerUi from 'swagger-ui-express'
 import swaggerJsdoc from 'swagger-jsdoc'
 import './utils/file'
-import { envConfig } from './constants/config'
-
+import { envConfig, isProduction } from './constants/config'
+import helmet from 'helmet'
+import { rateLimit } from 'express-rate-limit'
 const options: swaggerJsdoc.Options = {
   definition: {
     openapi: '3.1.0',
@@ -65,7 +66,21 @@ databaseService.connect().then(() => {
 const app = express()
 const port = envConfig.port
 app.use(express.json())
-app.use(cors())
+app.use(helmet())
+const corsOptions: CorsOptions = {
+  origin: isProduction ? envConfig.clientUrl : '*'
+}
+app.use(cors(corsOptions))
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
+  standardHeaders: 'draft-7', // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
+  legacyHeaders: false // Disable the `X-RateLimit-*` headers.
+  // store: ... , // Redis, Memcached, etc. See below.
+})
+
+// Apply the rate limiting middleware to all requests.
+app.use(limiter)
 // Init folder for upload
 initFolder()
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification))

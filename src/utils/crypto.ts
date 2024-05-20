@@ -1,4 +1,3 @@
-
 import { createHash } from 'node:crypto'
 import { envConfig } from '~/constants/config'
 function sha256(content: string) {
