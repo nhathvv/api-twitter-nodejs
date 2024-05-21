@@ -1,0 +1,9 @@
+version: '3.8'
+services:
+  twitter:
+    image: nhathv/nodejs:v0
+    ports:
+      - 4000:4000
+    volumes:
+      - ~/Dev/backend-nodejs-twitter-api/uploads:/app/uploads
+    command: ['pm2-runtime', 'start', 'ecosystem.config.js']
