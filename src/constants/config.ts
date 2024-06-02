@@ -41,6 +41,7 @@ export const envConfig = {
   dbHashtagCollection: process.env.DB_COLLECTION_HASHTAG,
   dbBookmarkCollection: process.env.DB_COLLECTION_BOOKMARK,
   dbLikeCollection: process.env.DB_COLLECTION_LIKE,
+  dbConversationCollection: process.env.DB_COLLECTION_CONVERSATION,
 
   googleClientId: process.env.GOOGLE_CLIENT_ID,
   googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,

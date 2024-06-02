@@ -12,7 +12,6 @@ import bookmarksRoutes from './routes/bookmarks.routes'
 import likesRoutes from './routes/likes.routes'
 import searchRoutes from './routes/search.routes'
 import { createServer } from 'http'
-import { Server } from 'socket.io'
 import './utils/s3'
 import swaggerUi from 'swagger-ui-express'
 import swaggerJsdoc from 'swagger-jsdoc'
@@ -20,6 +19,8 @@ import './utils/file'
 import { envConfig, isProduction } from './constants/config'
 import helmet from 'helmet'
 import { rateLimit } from 'express-rate-limit'
+import { Server } from 'socket.io'
+import { Conversation } from './models/schemas/Conversations.schema'
 const options: swaggerJsdoc.Options = {
   definition: {
     openapi: '3.1.0',
@@ -55,7 +56,7 @@ const options: swaggerJsdoc.Options = {
 }
 const openapiSpecification = swaggerJsdoc(options)
 config()
-// Connect to MongoDB
+
 databaseService.connect().then(() => {
   databaseService.indexUsers()
   databaseService.indexRefreshTokens()
@@ -72,17 +73,15 @@ const corsOptions: CorsOptions = {
 }
 app.use(cors(corsOptions))
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
-  standardHeaders: 'draft-7', // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
-  legacyHeaders: false // Disable the `X-RateLimit-*` headers.
-  // store: ... , // Redis, Memcached, etc. See below.
+  windowMs: 15 * 60 * 1000,
+  limit: 100,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false
 })
 
-// Apply the rate limiting middleware to all requests.
 app.use(limiter)
-// Init folder for upload
 initFolder()
+
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification))
 app.use('/users', userRouter)
 app.use('/medias', mediasRouter)
@@ -93,12 +92,11 @@ app.use('/likes/', likesRoutes)
 app.use('/search', searchRoutes)
 app.use('/static', staticsRouter)
 
-// Defaut error handler
 app.use(defaultErrorHandler)
 const httpServer = createServer(app)
 const io = new Server(httpServer, {
   cors: {
-    origin: 'http://localhost:5173'
+    origin: '*'
   }
 })
 const users: {
@@ -106,22 +104,32 @@ const users: {
     socket_id: string
   }
 } = {}
-// io.on('connection', (socket) => {
-//   console.log(`user ${socket.id} connected`)
-//   const user_id = socket.handshake.auth._id as string
-//   users[user_id] = {
-//     socket_id: socket.id
-//   }
-//   socket.on('private message', (data) => {
-//     const receiver_socket_id = users[data.to].socket_id
-//     socket.to(receiver_socket_id).emit('receive private message', {
-//       content: data.content,
-//       from: user_id
-//     })
-//   })
-// })
-
+io.on('connection', (socket) => {
+  console.log(`user ${socket.id} connection`)
+  const user_id = socket.handshake.auth._id
+  users[user_id] = {
+    socket_id: socket.id
+  }
+  socket.on('private message', async (data) => {
+    const receiver_socket_id = users[data.to]?.socket_id
+    if (!receiver_socket_id) return
+    await databaseService.conversations.insertOne(
+      new Conversation({
+        sender_id: data.from,
+        receiver_id: data.to,
+        content: data.content
+      })
+    )
+    socket.to(receiver_socket_id).emit('receiver private message', {
+      content: data.content,
+      from: user_id
+    })
+  })
+  socket.on('disconnect', () => {
+    delete users[user_id]
+    console.log(`user ${socket.id} disconnect`)
+  })
+})
 httpServer.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
-
