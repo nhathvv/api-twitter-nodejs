@@ -21,6 +21,8 @@ import helmet from 'helmet'
 import { rateLimit } from 'express-rate-limit'
 import { Server } from 'socket.io'
 import { Conversation } from './models/schemas/Conversations.schema'
+import { ObjectId } from 'mongodb'
+import conversationsRoutes from './routes/conversations.routes'
 const options: swaggerJsdoc.Options = {
   definition: {
     openapi: '3.1.0',
@@ -87,6 +89,7 @@ app.use('/users', userRouter)
 app.use('/medias', mediasRouter)
 app.use('/statics/', staticsRouter)
 app.use('/tweets', tweetsRouter)
+app.use('/conversations', conversationsRoutes)
 app.use('/bookmarks', bookmarksRoutes)
 app.use('/likes/', likesRoutes)
 app.use('/search', searchRoutes)
@@ -115,8 +118,8 @@ io.on('connection', (socket) => {
     if (!receiver_socket_id) return
     await databaseService.conversations.insertOne(
       new Conversation({
-        sender_id: data.from,
-        receiver_id: data.to,
+        sender_id: new ObjectId(data.from),
+        receiver_id: new ObjectId(data.to),
         content: data.content
       })
     )

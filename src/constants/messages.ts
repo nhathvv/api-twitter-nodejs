@@ -104,4 +104,7 @@ export const SEARCH_MESSAGES = {
   PEOPLE_FOLLOW_MUST_BE_A_STRING: 'People follow must be a string',
   INVALID_PEOPLE_FOLLOW: 'Invalid people follow'
 }
+export const CONVERSATION_MESSAGE = {
+  GET_CONVERSATION_SUCCESSFULLY: 'Get conversation successfully'
+}
 export default USERS_MESSAGES
