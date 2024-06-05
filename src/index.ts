@@ -23,6 +23,12 @@ import { Server } from 'socket.io'
 import { Conversation } from './models/schemas/Conversations.schema'
 import { ObjectId } from 'mongodb'
 import conversationsRoutes from './routes/conversations.routes'
+import { verifyAccessToken } from './middlewares/common.middlewares'
+import { TokenPayload } from './models/requests/Users.request'
+import { UserVerifyStatus } from './constants/enums'
+import { ErrorWithStatus } from './models/Errors'
+import USERS_MESSAGES from './constants/messages'
+import HTTP_STATUS from './constants/httpStatus'
 const options: swaggerJsdoc.Options = {
   definition: {
     openapi: '3.1.0',
@@ -107,27 +113,51 @@ const users: {
     socket_id: string
   }
 } = {}
+io.use(async (socket, next) => {
+  try {
+    const access_token = socket.handshake.auth.Authorization?.split(' ')[1]
+    const decoded_authorization = await verifyAccessToken(access_token)
+    const { verify } = decoded_authorization as TokenPayload
+    if (verify === UserVerifyStatus.Unverified) {
+      throw new ErrorWithStatus({
+        message: USERS_MESSAGES.USER_EMAIL_NOT_VERIFIED,
+        status: HTTP_STATUS.FORBIDDEN
+      })
+    }
+    socket.handshake.auth.decoded_authorization = decoded_authorization as TokenPayload
+    next()
+  } catch (error) {
+    console.log(error)
+    next({
+      message: 'Unauthorized',
+      name: 'UnauthorizedError',
+      data: error
+    })
+  }
+})
 io.on('connection', (socket) => {
   console.log(`user ${socket.id} connection`)
-  const user_id = socket.handshake.auth._id
+  const { user_id } = socket.handshake.auth.decoded_authorization
   users[user_id] = {
     socket_id: socket.id
   }
   socket.on('send_message', async (data) => {
     const { sender_id, receiver_id, content } = data.payload
-    const receiver_socket_id = users[receiver_id]?.socket_id
-    if (!receiver_socket_id) return
     const conversation = new Conversation({
       sender_id: new ObjectId(sender_id),
       receiver_id: new ObjectId(receiver_id),
       content: content
     })
     const result = await databaseService.conversations.insertOne(conversation)
+    console.log(result)
     conversation._id = result.insertedId
-    socket.to(receiver_socket_id).emit('receiver_message', {
-      payload: conversation,
-      from: user_id
-    })
+    const receiver_socket_id = users[receiver_id]?.socket_id
+    if (receiver_socket_id) {
+      socket.to(receiver_socket_id).emit('receiver_message', {
+        payload: conversation,
+        from: user_id
+      })
+    }
   })
   socket.on('disconnect', () => {
     delete users[user_id]

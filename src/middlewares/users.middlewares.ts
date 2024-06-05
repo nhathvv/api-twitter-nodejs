@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import { ParamSchema, check, checkSchema } from 'express-validator'
+import { ParamSchema, checkSchema } from 'express-validator'
 import { JsonWebTokenError } from 'jsonwebtoken'
 import { ObjectId } from 'mongodb'
 import { envConfig } from '~/constants/config'
@@ -14,6 +14,7 @@ import usersService from '~/services/users.services'
 import { hashPassword } from '~/utils/crypto'
 import { verifyToken } from '~/utils/jwt'
 import { validate } from '~/utils/validation'
+import { verifyAccessToken } from './common.middlewares'
 
 const passswordSchema: ParamSchema = {
   notEmpty: {
@@ -251,26 +252,7 @@ export const accessTokenValidator = validate(
         custom: {
           options: async (value, { req }) => {
             const access_token = (value || '').split(' ')[1]
-            if (!access_token) {
-              throw new ErrorWithStatus({
-                message: USERS_MESSAGES.ACCESS_TOKEN_IS_REQUIRED,
-                status: HTTP_STATUS.UNAUTHORIZED
-              })
-            }
-            try {
-              const decoded_authorization = await verifyToken({
-                token: access_token,
-                secretOrPublicKey: envConfig.jwtSecretAccessToken as string
-              })
-              req.decoded_authorization = decoded_authorization
-            } catch (error) {
-              throw new ErrorWithStatus({
-                message: (error as JsonWebTokenError).message,
-                status: HTTP_STATUS.UNAUTHORIZED
-              })
-            }
-
-            return true
+            await verifyAccessToken(access_token, req as Request)
           }
         }
       }
