@@ -12,7 +12,7 @@ const conversationsRoutes = Router()
  * Headers : {Authorization : Bearer <access_token>
  */
 conversationsRoutes.get(
-  '/receiver/:receiver_id',
+  '/receivers/:receiver_id',
   accessTokenValidator,
   verifiedUserValidator,
   getConversationsController
