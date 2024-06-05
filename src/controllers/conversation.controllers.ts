@@ -1,7 +1,8 @@
 import { Request, Response } from 'express'
 import { CONVERSATION_MESSAGE } from '~/constants/messages'
+import { GetConversationsParams } from '~/models/requests/Conversations.request'
 import conversationService from '~/services/conversation.services'
-export const getConversationsController = async (req: Request, res: Response) => {
+export const getConversationsController = async (req: Request<GetConversationsParams>, res: Response) => {
   const sender_id = req.decoded_authorization?.user_id as string
   const { receiver_id } = req.params
   const limit = Number(req.query.limit)

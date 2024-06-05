@@ -133,6 +133,28 @@ const imageSchema: ParamSchema = {
     errorMessage: USERS_MESSAGES.IMAGE_LENGTH_MUST_BE_FROM_1_TO_400
   }
 }
+const userIdSchema: ParamSchema = {
+  notEmpty: {
+    errorMessage: USERS_MESSAGES.USER_NOT_FOUND
+  },
+  custom: {
+    options: async (value: string, { req }) => {
+      if (ObjectId.isValid(value) === false) {
+        throw new ErrorWithStatus({
+          message: USERS_MESSAGES.INVALID_USER_ID,
+          status: HTTP_STATUS.NOT_FOUND
+        })
+      }
+      const followed_user = await databaseService.users.findOne({ _id: new ObjectId(value) })
+      if (!followed_user) {
+        throw new ErrorWithStatus({
+          message: USERS_MESSAGES.USER_NOT_FOUND,
+          status: HTTP_STATUS.NOT_FOUND
+        })
+      }
+    }
+  }
+}
 export const loginValidator = validate(
   checkSchema(
     {
@@ -490,28 +512,7 @@ export const followValidator = validate(
 export const unfollowValidator = validate(
   checkSchema(
     {
-      user_id: {
-        notEmpty: {
-          errorMessage: USERS_MESSAGES.USER_NOT_FOUND
-        },
-        custom: {
-          options: async (value: string, { req }) => {
-            if (ObjectId.isValid(value) === false) {
-              throw new ErrorWithStatus({
-                message: USERS_MESSAGES.INVALID_USER_ID,
-                status: HTTP_STATUS.NOT_FOUND
-              })
-            }
-            const followed_user = await databaseService.users.findOne({ _id: new ObjectId(value) })
-            if (!followed_user) {
-              throw new ErrorWithStatus({
-                message: USERS_MESSAGES.USER_NOT_FOUND,
-                status: HTTP_STATUS.NOT_FOUND
-              })
-            }
-          }
-        }
-      }
+      user_id: userIdSchema
     },
     ['params']
   )
@@ -548,6 +549,14 @@ export const changePasswordValidator = validate(
       confirm_password: confirmPasswordSchema
     },
     ['body']
+  )
+)
+export const getConversationsValidator = validate(
+  checkSchema(
+    {
+      receiver_id: userIdSchema
+    },
+    ['params']
   )
 )
 export const isUserLoggedInValidator = (middleware: (req: Request, res: Response, next: NextFunction) => void) => {

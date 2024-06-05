@@ -126,7 +126,7 @@ io.on('connection', (socket) => {
     conversation._id = result.insertedId
     socket.to(receiver_socket_id).emit('receiver_message', {
       payload: conversation,
-      from : user_id
+      from: user_id
     })
   })
   socket.on('disconnect', () => {
