@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "engines": {
+    "node": ">=19.0.0"
+  },
   "scripts": {
     "dev": "NODE_ENV=development npx nodemon",
     "dev:stag": "NODE_ENV=staging npx nodemon",

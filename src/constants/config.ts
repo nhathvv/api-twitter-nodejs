@@ -3,12 +3,14 @@ import fs from 'fs'
 import path from 'path'
 const env = process.env.NODE_ENV
 const envFilename = `.env.${env}`
-if (!env) {
-  process.exit(1)
-}
-if (!fs.existsSync(path.resolve(envFilename))) {
-  process.exit(1)
-}
+// if (!env) {
+//   process.exit(1)
+// }
+// if (!fs.existsSync(path.resolve(envFilename))) {
+//   process.exit(1)
+// }
+console.log(envFilename)
+console.log(path.resolve(envFilename))
 config({
   path: envFilename
 })

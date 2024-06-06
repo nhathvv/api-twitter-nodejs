@@ -32,7 +32,7 @@ const options: swaggerJsdoc.Options = {
     },
     servers: [
       {
-        url: 'https://nhat-dev-twitter.onrender.com/',
+        url: 'https://backend-nodejs-api-twitter.onrender.com/',
         description: 'Production server'
       }
     ],
@@ -93,6 +93,8 @@ app.use('/bookmarks', bookmarksRoutes)
 app.use('/likes/', likesRoutes)
 app.use('/search', searchRoutes)
 app.use('/static', staticsRouter)
+
+console.log(envConfig.dbUserCollection)
 
 app.use(defaultErrorHandler)
 initSocket(httpServer)
