@@ -23,7 +23,7 @@ import conversationsRoutes from './routes/conversations.routes'
 import initSocket from './utils/socket'
 const options: swaggerJsdoc.Options = {
   definition: {
-    openapi: '3.1.0',
+    openapi: '3.0.0',
     info: {
       title: 'API X (Twitter)',
       version: '1.0.0',

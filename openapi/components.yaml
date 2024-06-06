@@ -298,3 +298,29 @@ components:
           type: string
           format: date-time
           description: Thời gian cập nhật tweet
+    Conversation:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: MongoId
+          example: 665c8b2d6481953baba52c38
+        sender_id:
+          type: string
+          format: MongoId
+          example: 66485b4e45d87b2dfb3e996b
+        receiver_id:
+          type: string
+          format: MongoId
+          example: 6648fe11bc5a07ae68f00141
+        content:
+          type: string
+          example: Hello guys
+        created_at:
+          type: string
+          format: date-time
+          example: 2024-06-02T15:09:33.782Z
+        update_at:
+          type: string
+          format: date-time
+          example: 2024-06-02T15:09:33.782Z
